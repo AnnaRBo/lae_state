@@ -17,7 +17,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,10 +34,8 @@ import de.hhn.tictactoe.viewmodel.GameViewModel
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(viewModel: GameViewModel) {
-    val currentPlayer = viewModel.currentGame.currentPlayer
-    val isGameEnding: Boolean = viewModel.currentGame.isGameEnding
-    val winningPlayer = viewModel.currentGame.winningPlayer
-    val winningPlayerColor = Field(winningPlayer).showColor()
+    val currentGame by viewModel.currentGame.collectAsState()
+    val gameField by viewModel.gameField.collectAsState()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -58,7 +57,7 @@ fun HomeScreen(viewModel: GameViewModel) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
-                if (currentPlayer == Status.PlayerX) {
+                if (currentGame.currentPlayer == Status.PlayerX) {
                     Text(
                         text = Status.PlayerX.toString(),
                         style = MaterialTheme.typography.headlineMedium,
@@ -97,7 +96,7 @@ fun HomeScreen(viewModel: GameViewModel) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                viewModel.gameField.forEach { rows ->
+                gameField.forEach { rows ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
@@ -134,13 +133,13 @@ fun HomeScreen(viewModel: GameViewModel) {
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (isGameEnding) {
+                    if (currentGame.isGameEnding) {
                         Text(
-                            text = "Winning: $winningPlayer",
+                            text = "Winning: ${currentGame.winningPlayer}",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(vertical = 25.dp),
-                            color = winningPlayerColor
+                            color = Field(currentGame.winningPlayer).showColor()
                         )
                     }
                 }

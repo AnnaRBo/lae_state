@@ -34,8 +34,10 @@ import de.hhn.tictactoe.viewmodel.GameViewModel
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(viewModel: GameViewModel) {
-    val currentGame by viewModel.currentGame.collectAsState()
     val gameField by viewModel.gameField.collectAsState()
+    val currentPlayer by viewModel.currentPlayer.collectAsState()
+    val winningPlayer by viewModel.winningPlayer.collectAsState()
+    val isGameEnding by viewModel.isGameEnding.collectAsState()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -57,7 +59,7 @@ fun HomeScreen(viewModel: GameViewModel) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
-                if (currentGame.currentPlayer == Status.PlayerX) {
+                if (currentPlayer == Status.PlayerX) {
                     Text(
                         text = Status.PlayerX.toString(),
                         style = MaterialTheme.typography.headlineMedium,
@@ -133,13 +135,13 @@ fun HomeScreen(viewModel: GameViewModel) {
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (currentGame.isGameEnding) {
+                    if (isGameEnding) {
                         Text(
-                            text = "Winning: ${currentGame.winningPlayer}",
+                            text = "Winning: $winningPlayer",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(vertical = 25.dp),
-                            color = Field(currentGame.winningPlayer).showColor()
+                            color = Field(winningPlayer).showColor()
                         )
                     }
                 }

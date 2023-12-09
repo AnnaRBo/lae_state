@@ -28,12 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.hhn.tictactoe.ui.theme.TicTacToeTheme
 import de.hhn.tictactoe.view.HomeScreen
+import de.hhn.tictactoe.viewmodel.GameViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val viewModel = GameViewModel(this)
             TicTacToeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -56,7 +58,7 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     IconButton(
                                         onClick = {
-                                            // TODO:  
+                                            viewModel.resetGame()
                                         }
                                     ) {
                                         Icon(
@@ -68,7 +70,7 @@ class MainActivity : ComponentActivity() {
                                 navigationIcon = {
                                     IconButton(
                                         onClick = {
-
+                                            viewModel.resetGame()
                                         }
                                     ) {
                                         Icon(
@@ -85,9 +87,9 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(values)
-                        ){
+                        ) {
                             item {
-                                HomeScreen()
+                                HomeScreen(viewModel)
                             }
                         }
                     }
@@ -101,7 +103,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun DefaultPreview() {
         TicTacToeTheme {
-            HomeScreen()
+            val viewModel = GameViewModel(this)
+            HomeScreen(viewModel)
         }
     }
 }

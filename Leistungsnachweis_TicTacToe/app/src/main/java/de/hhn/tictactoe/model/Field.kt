@@ -2,7 +2,7 @@ package de.hhn.tictactoe.model
 
 import androidx.compose.ui.graphics.Color
 
-data class Field (
+data class Field(
     var status: Status = Status.Empty,
     var indexColumn: Int = 0,
     var indexRow: Int = 0

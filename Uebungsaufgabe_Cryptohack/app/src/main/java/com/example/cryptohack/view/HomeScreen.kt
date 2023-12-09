@@ -31,8 +31,10 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen() {
-    val cryptos = listOf(CryptoCurrency("1", 1, "BTC", "Bitcoin", 2.0,2.0,2.0,2.0,2.0,2.0,2.0,""),
-        CryptoCurrency("2", 2, "ETH", "ETH", 2.0,2.0,2.0,2.0,2.0,2.0,2.0,""))
+    val cryptos = listOf(
+        CryptoCurrency("1", 1, "BTC", "Bitcoin", 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, ""),
+        CryptoCurrency("2", 2, "ETH", "ETH", 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, "")
+    )
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,21 +46,18 @@ fun HomeScreen() {
             modifier = Modifier.padding(vertical = 50.dp)
         )
         var showMenu by remember { mutableStateOf(false) }
-        Box(modifier = Modifier.align(Alignment.End)){
+        Box(modifier = Modifier.align(Alignment.End)) {
             IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(Icons.Default.MoreVert, "")
             }
-            DropdownMenu(
-                expanded = showMenu,
-                onDismissRequest = { showMenu = false }) {
+            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                 DropdownMenuItem(text = { Text("Price") }, onClick = { /*TODO*/ })
                 DropdownMenuItem(text = { Text("MarketCap") }, onClick = { /*TODO*/ })
             }
         }
 
         LazyColumn {
-            items(cryptos.size, key = { index -> cryptos[index].id }) {
-                index ->
+            items(cryptos.size, key = { index -> cryptos[index].id }) { index ->
                 CryptoRow(cryptos[index])
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -68,7 +67,7 @@ fun HomeScreen() {
 
 @Composable
 fun CryptoRow(cryptoCurrency: CryptoCurrency) {
-    Row (
+    Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth(0.9f)
@@ -77,7 +76,11 @@ fun CryptoRow(cryptoCurrency: CryptoCurrency) {
             Text(text = cryptoCurrency.name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
             Text(text = cryptoCurrency.symbol, style = MaterialTheme.typography.titleSmall)
         }
-        Text(((cryptoCurrency.priceUsd * 100).roundToInt().toDouble() /100).toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
+        Text(
+            ((cryptoCurrency.priceUsd * 100).roundToInt().toDouble() / 100).toString(),
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge
+        )
     }
 }
 

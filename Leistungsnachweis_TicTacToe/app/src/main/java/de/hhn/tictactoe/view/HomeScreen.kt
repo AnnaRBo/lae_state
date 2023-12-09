@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,22 +28,14 @@ import androidx.compose.ui.unit.sp
 import de.hhn.tictactoe.model.Status
 import de.hhn.tictactoe.R
 import de.hhn.tictactoe.model.Field
-import de.hhn.tictactoe.model.GameModel
+import de.hhn.tictactoe.viewmodel.GameViewModel
 
 @ExperimentalMaterial3Api
 @Composable
-fun HomeScreen() {
-    // currentGame, gameField are Dummy data
-    val currentGame = GameModel()
-    val gameField =  Array(3) {
-        Array(3) {
-            Field()
-        }
-    }
-
-    val currentPlayer = currentGame.currentPlayer
-    val isGameEnding: Boolean = currentGame.isGameEnding
-    val winningPlayer = currentGame.winningPlayer
+fun HomeScreen(viewModel: GameViewModel) {
+    val currentPlayer = viewModel.currentGame.currentPlayer
+    val isGameEnding: Boolean = viewModel.currentGame.isGameEnding
+    val winningPlayer = viewModel.currentGame.winningPlayer
     val winningPlayerColor = Field(winningPlayer).showColor()
 
     Column(
@@ -104,7 +97,7 @@ fun HomeScreen() {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                gameField.forEach { rows ->
+                viewModel.gameField.forEach { rows ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
@@ -120,7 +113,7 @@ fun HomeScreen() {
                                     .height(111.dp)
                                     .width(111.dp),
                                 onClick = {
-                                    // TODO:
+                                    viewModel.selectField(field)
                                 }
                             ) {
                                 Box(
@@ -143,7 +136,7 @@ fun HomeScreen() {
                 ) {
                     if (isGameEnding) {
                         Text(
-                            text = "Wining: $winningPlayer",
+                            text = "Winning: $winningPlayer",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(vertical = 25.dp),

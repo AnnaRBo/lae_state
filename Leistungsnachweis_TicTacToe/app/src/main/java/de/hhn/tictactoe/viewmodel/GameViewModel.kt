@@ -9,6 +9,7 @@ import de.hhn.tictactoe.model.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class GameViewModel(context: Context) : ViewModel() {
 
@@ -17,36 +18,46 @@ class GameViewModel(context: Context) : ViewModel() {
     private var _currentGame = MutableStateFlow(GameModel())
     private var _gameField = MutableStateFlow(Array(3) { row ->
         Array(3) { column ->
-            Field(Status.Empty,column,row)
+            Field(Status.Empty, column, row)
         }
     })
-    private var _currentPlayer = MutableStateFlow(_currentGame.value.currentPlayer)
-    private var _winningPlayer = MutableStateFlow(_currentGame.value.winningPlayer)
-    private var _isGameEnding = MutableStateFlow(_currentGame.value.isGameEnding)
 
-    val gameField : StateFlow<Array<Array<Field>>> = _gameField.asStateFlow()
-    val currentGame : StateFlow<GameModel> = _currentGame.asStateFlow()
+    val gameField: StateFlow<Array<Array<Field>>> = _gameField.asStateFlow()
+    val currentGame: StateFlow<GameModel> = _currentGame.asStateFlow()
 
+    var tempGame = _currentGame
+    var tempFields = _gameField.value
     fun resetGame() {
-        _currentPlayer = MutableStateFlow(Status.PlayerX)
-        _winningPlayer = MutableStateFlow(Status.Empty)
-        _isGameEnding = MutableStateFlow(false)
-        _gameField = MutableStateFlow(Array(3) { row ->
-            Array(3) { column ->
-                Field(Status.Empty,column,row)
+        _currentGame.update { GameModel() }
+        _gameField.update {
+            Array(3) { row ->
+                Array(3) { column ->
+                    Field(Status.Empty, column, row)
+                }
             }
-        })
+        }
     }
 
     fun selectField(field: Field) {
         if (field.status == Status.Empty) {
-            val tempFields = _gameField
-            tempFields.value[field.indexRow][field.indexColumn] = Field(_currentGame.value.currentPlayer, field.indexColumn, field.indexRow)
-            _gameField = tempFields
+            /*
+                        _gameField.value[field.indexRow][field.indexColumn] =
+                            Field(_currentGame.value.currentPlayer, field.indexColumn, field.indexRow)
+                        _gameField.update {
+                            _gameField.value
+                        }
+            */
+
+            tempFields[field.indexRow][field.indexColumn] =
+                Field(_currentGame.value.currentPlayer, field.indexColumn, field.indexRow)
+            _gameField.update {
+                tempFields
+            }
             checkEndingGame()
-            val tempGame = _currentGame
             tempGame.value.currentPlayer.next()
-            _currentGame = tempGame
+            _currentGame.update {
+                tempGame.value
+            }
         } else {
             Toast.makeText(theContext, "Invalid move! Please choose an other field.", Toast.LENGTH_LONG).show()
         }
@@ -75,10 +86,11 @@ class GameViewModel(context: Context) : ViewModel() {
             }
 
             if (quantityInRow == 3 || quantityInColumn == 3 || quantityInDiagonal1 == 3 || quantityInDiagonal2 == 3) {
-                val tempGame = _currentGame
                 tempGame.value.isGameEnding = true
                 tempGame.value.winningPlayer = _currentGame.value.currentPlayer
-                _currentGame = tempGame
+                _currentGame.update {
+                    tempGame.value
+                }
                 break
             }
             quantityInRow = 0

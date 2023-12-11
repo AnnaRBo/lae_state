@@ -1,5 +1,6 @@
 package de.hhn.tictactoe.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,9 +36,12 @@ import de.hhn.tictactoe.viewmodel.GameViewModel
 @Composable
 fun HomeScreen(viewModel: GameViewModel) {
     val gameField by viewModel.gameField.collectAsState()
-    val currentPlayer by viewModel.currentPlayer.collectAsState()
-    val winningPlayer by viewModel.winningPlayer.collectAsState()
-    val isGameEnding by viewModel.isGameEnding.collectAsState()
+    val currentGame by viewModel.currentGame.collectAsState()
+
+    val currentPlayer = currentGame.currentPlayer
+    val isGameEnding : Boolean = currentGame.isGameEnding
+    val winningPlayer = currentGame.winningPlayer
+    val winningPlayerColor = Field(winningPlayer).showColor()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -55,8 +59,7 @@ fun HomeScreen(viewModel: GameViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 if (currentPlayer == Status.PlayerX) {
@@ -92,9 +95,7 @@ fun HomeScreen(viewModel: GameViewModel) {
                 }
             }
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.White),
+                modifier = Modifier.fillMaxSize().background(color = Color.White),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -114,7 +115,13 @@ fun HomeScreen(viewModel: GameViewModel) {
                                     .height(111.dp)
                                     .width(111.dp),
                                 onClick = {
-                                    viewModel.selectField(field)
+                                    if (!currentGame.isGameEnding)
+                                        viewModel.selectField(field)
+                                    // test what happened
+                                    Log.d(
+                                        "clicked Field",
+                                        "field ${field.indexColumn},${field.indexRow} with status ${field.status}"
+                                    )
                                 }
                             ) {
                                 Box(
@@ -130,19 +137,19 @@ fun HomeScreen(viewModel: GameViewModel) {
                             }
                         }
                     }
-                }
-                Column(
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isGameEnding) {
-                        Text(
-                            text = "Winning: $winningPlayer",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(vertical = 25.dp),
-                            color = Field(winningPlayer).showColor()
-                        )
+                    Column(
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        if (isGameEnding) {
+                            Text(
+                                text = "Winning: $winningPlayer",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 25.dp),
+                                color = winningPlayerColor
+                            )
+                        }
                     }
                 }
             }

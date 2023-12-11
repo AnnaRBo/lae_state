@@ -1,7 +1,5 @@
 package de.hhn.tictactoe.viewmodel
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import de.hhn.tictactoe.model.Field
 import de.hhn.tictactoe.model.GameModel
@@ -11,9 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class GameViewModel(context: Context) : ViewModel() {
+class GameViewModel() : ViewModel() {
 
-    private val theContext: Context = context
 
     private var _currentGame = MutableStateFlow(GameModel())
     private var _gameField = MutableStateFlow(Array(3) { row ->
@@ -25,8 +22,6 @@ class GameViewModel(context: Context) : ViewModel() {
     val gameField: StateFlow<Array<Array<Field>>> = _gameField.asStateFlow()
     val currentGame: StateFlow<GameModel> = _currentGame.asStateFlow()
 
-    var tempGame = _currentGame
-    var tempFields = _gameField.value
     fun resetGame() {
         _currentGame.update { GameModel() }
         _gameField.update {
@@ -47,6 +42,8 @@ class GameViewModel(context: Context) : ViewModel() {
                             _gameField.value
                         }
             */
+            val tempGame = _currentGame.value
+            val tempFields = _gameField.value
 
             tempFields[field.indexRow][field.indexColumn] =
                 Field(_currentGame.value.currentPlayer, field.indexColumn, field.indexRow)
@@ -54,12 +51,10 @@ class GameViewModel(context: Context) : ViewModel() {
                 tempFields
             }
             checkEndingGame()
-            tempGame.value.currentPlayer.next()
+            tempGame.currentPlayer.next()
             _currentGame.update {
-                tempGame.value
+                tempGame
             }
-        } else {
-            Toast.makeText(theContext, "Invalid move! Please choose an other field.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -86,10 +81,12 @@ class GameViewModel(context: Context) : ViewModel() {
             }
 
             if (quantityInRow == 3 || quantityInColumn == 3 || quantityInDiagonal1 == 3 || quantityInDiagonal2 == 3) {
-                tempGame.value.isGameEnding = true
-                tempGame.value.winningPlayer = _currentGame.value.currentPlayer
+                val tempGame = _currentGame.value
+
+                tempGame.isGameEnding = true
+                tempGame.winningPlayer = _currentGame.value.currentPlayer
                 _currentGame.update {
-                    tempGame.value
+                    tempGame
                 }
                 break
             }

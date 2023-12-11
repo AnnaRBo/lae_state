@@ -137,6 +137,7 @@ fun HomeScreen(viewModel: GameViewModel) {
                             }
                         }
                     }
+                }
                     Column(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -149,7 +150,6 @@ fun HomeScreen(viewModel: GameViewModel) {
                                 modifier = Modifier.padding(vertical = 25.dp),
                                 color = winningPlayerColor
                             )
-                        }
                     }
                 }
             }

@@ -35,13 +35,6 @@ class GameViewModel() : ViewModel() {
 
     fun selectField(field: Field) {
         if (field.status == Status.Empty) {
-            /*
-                        _gameField.value[field.indexRow][field.indexColumn] =
-                            Field(_currentGame.value.currentPlayer, field.indexColumn, field.indexRow)
-                        _gameField.update {
-                            _gameField.value
-                        }
-            */
             val tempFields = _gameField.value.clone()
 
             tempFields[field.indexRow][field.indexColumn] =

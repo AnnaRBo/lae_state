@@ -1,17 +1,8 @@
 package de.hhn.tictactoe.view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,19 +18,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.hhn.tictactoe.model.Status
 import de.hhn.tictactoe.R
 import de.hhn.tictactoe.model.Field
+import de.hhn.tictactoe.model.Status
 import de.hhn.tictactoe.viewmodel.GameViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(viewModel: GameViewModel) {
+    /**
+     * Hier hole ich mir die beiden Variablen aus dem viewModel.
+     * Durch das .collectAsState() werden die Variablen aktualisiert, wenn sie sich in den viewModel-Methoden ändern.
+     */
     val gameField by viewModel.gameField.collectAsState()
     val currentGame by viewModel.currentGame.collectAsState()
 
     val currentPlayer = currentGame.currentPlayer
-    val isGameEnding : Boolean = currentGame.isGameEnding
+    val isGameEnding: Boolean = currentGame.isGameEnding
     val winningPlayer = currentGame.winningPlayer
     val winningPlayerColor = Field(winningPlayer).showColor()
 
@@ -104,26 +99,18 @@ fun HomeScreen(viewModel: GameViewModel) {
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
                         rows.forEach { field ->
-                            Card(
-                                modifier = Modifier
-                                    .padding(all = 2.dp)
-                                    .border(
-                                        width = 2.dp,
-                                        color = Color.Gray,
-                                        shape = RoundedCornerShape(5.dp),
-                                    )
-                                    .height(111.dp)
-                                    .width(111.dp),
-                                onClick = {
-                                    if (!currentGame.isGameEnding)
-                                        viewModel.selectField(field)
-                                    // test what happened
-                                    Log.d(
-                                        "clicked Field",
-                                        "field ${field.indexColumn},${field.indexRow} with status ${field.status}"
-                                    )
-                                }
-                            ) {
+                            Card(modifier = Modifier.padding(all = 2.dp).border(
+                                width = 2.dp,
+                                color = Color.Gray,
+                                shape = RoundedCornerShape(5.dp),
+                            ).height(111.dp).width(111.dp), onClick = {
+                                if (!currentGame.isGameEnding)
+                                /**
+                                 * Wenn auf eins der 9 Felder geklickt wird und das Spiel noch nicht beendet wurde,
+                                 * wird die viewModel-Methode selectField ausgeführt.
+                                 */
+                                    viewModel.selectField(field)
+                            }) {
                                 Box(
                                     modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.Center,
@@ -138,18 +125,18 @@ fun HomeScreen(viewModel: GameViewModel) {
                         }
                     }
                 }
-                    Column(
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        if (isGameEnding) {
-                            Text(
-                                text = "Winning: $winningPlayer",
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(vertical = 25.dp),
-                                color = winningPlayerColor
-                            )
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    if (isGameEnding) {
+                        Text(
+                            text = "Winning: $winningPlayer",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(vertical = 25.dp),
+                            color = winningPlayerColor
+                        )
                     }
                 }
             }

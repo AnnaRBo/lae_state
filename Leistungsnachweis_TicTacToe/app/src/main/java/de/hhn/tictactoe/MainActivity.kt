@@ -26,7 +26,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val viewModel : GameViewModel by viewModels()
+            /**
+             * Hier habe ich das ViewModel hinzugefügt
+             */
+            val viewModel: GameViewModel by viewModels()
             TicTacToeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -49,6 +52,9 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     IconButton(
                                         onClick = {
+                                            /**
+                                             *  Hier habe ich die erste Reset-Möglichkeit implementiert.
+                                             */
                                             viewModel.resetGame()
                                         }
                                     ) {
@@ -61,6 +67,9 @@ class MainActivity : ComponentActivity() {
                                 navigationIcon = {
                                     IconButton(
                                         onClick = {
+                                            /**
+                                             *  Hier habe ich die zweite Reset-Möglichkeit implementiert.
+                                             */
                                             viewModel.resetGame()
                                         }
                                     ) {

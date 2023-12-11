@@ -42,8 +42,7 @@ class GameViewModel() : ViewModel() {
                             _gameField.value
                         }
             */
-            val tempGame = _currentGame.value
-            val tempFields = _gameField.value
+            val tempFields = _gameField.value.clone()
 
             tempFields[field.indexRow][field.indexColumn] =
                 Field(_currentGame.value.currentPlayer, field.indexColumn, field.indexRow)
@@ -51,9 +50,8 @@ class GameViewModel() : ViewModel() {
                 tempFields
             }
             checkEndingGame()
-            tempGame.currentPlayer.next()
             _currentGame.update {
-                tempGame
+                GameModel(_currentGame.value.currentPlayer.next(), _currentGame.value.winningPlayer, _currentGame.value.isGameEnding)
             }
         }
     }
@@ -72,28 +70,21 @@ class GameViewModel() : ViewModel() {
                 if (_gameField.value[j][i].status == _currentGame.value.currentPlayer) {
                     quantityInColumn++
                 }
-                if (_gameField.value[i][i].status == _currentGame.value.currentPlayer) {
-                    quantityInDiagonal1++
-                }
-                if (_gameField.value[i][2 - i].status == _currentGame.value.currentPlayer) {
-                    quantityInDiagonal2++
-                }
+            }
+            if (_gameField.value[i][i].status == _currentGame.value.currentPlayer) {
+                quantityInDiagonal1++
+            }
+            if (_gameField.value[i][2 - i].status == _currentGame.value.currentPlayer) {
+                quantityInDiagonal2++
             }
 
             if (quantityInRow == 3 || quantityInColumn == 3 || quantityInDiagonal1 == 3 || quantityInDiagonal2 == 3) {
-                val tempGame = _currentGame.value
-
-                tempGame.isGameEnding = true
-                tempGame.winningPlayer = _currentGame.value.currentPlayer
-                _currentGame.update {
-                    tempGame
-                }
+                _currentGame.value.isGameEnding = true
+                _currentGame.value.winningPlayer = _currentGame.value.currentPlayer
                 break
             }
             quantityInRow = 0
             quantityInColumn = 0
-            quantityInDiagonal1 = 0
-            quantityInDiagonal2 = 0
         }
     }
 
